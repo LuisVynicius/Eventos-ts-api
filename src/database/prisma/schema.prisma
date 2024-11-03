@@ -1,0 +1,52 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Departamentos {
+  DepartamentoId       Int           @id @default(autoincrement())
+  NomeDepartamento     String        @db.VarChar(50)
+  eventos              Eventos[]
+  participantes        Participantes[]
+}
+
+model Eventos {
+  EventoId             Int           @id @default(autoincrement())
+  NomeEvento           String        @db.VarChar(100)
+  DataInicioEvento     DateTime
+  DataFimEvento        DateTime
+  DescricaoEvento      String?       @db.VarChar(500)
+  TipoEvento           String        @db.VarChar(50)
+  DepartamentoEventoId Int
+  departamento         Departamentos @relation(fields: [DepartamentoEventoId], references: [DepartamentoId])
+  inscricoes           Inscricoes[]
+}
+
+model Inscricoes {
+  InscricaoId     Int           @id @default(autoincrement())
+  EventoId        Int
+  evento          Eventos       @relation(fields: [EventoId], references: [EventoId])
+  ParticipanteId  Int
+  participante    Participantes @relation(fields: [ParticipanteId], references: [ParticipanteId])
+  DataInscricao   DateTime
+  Compareceu      Boolean       @default(false)
+  certificado     Certificados?
+}
+
+model Certificados {
+  CertificadoId           Int         @id @default(autoincrement())
+  InscricaoId             Int         @unique
+  inscricao               Inscricoes  @relation(fields: [InscricaoId], references: [InscricaoId])
+  ArquivoCertificado      Bytes
+  DataEmissaoCertificado  DateTime
+}

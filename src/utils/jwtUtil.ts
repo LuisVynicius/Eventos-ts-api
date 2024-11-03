@@ -1,7 +1,6 @@
-import { sign } from "jsonwebtoken";
+import { sign, verify } from "jsonwebtoken";
 
 const getToken = (Email: string) => {
-    
     const secretKey = getSecretKey();
 
     const token = sign({Email}, secretKey);
@@ -19,4 +18,9 @@ const getSecretKey = () => {
     return secretKey;
 };
 
-export default {getToken, getSecretKey};
+const verifyToken = (token: string) => {
+    const decoded = verify(token, getSecretKey()) as { Email: string };
+    return decoded.Email;
+};
+
+export default {getToken, getSecretKey, verifyToken};

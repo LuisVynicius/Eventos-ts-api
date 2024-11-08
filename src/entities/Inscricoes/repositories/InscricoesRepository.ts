@@ -1,4 +1,3 @@
-import { Eventos, Inscricoes } from "@prisma/client";
 import prisma from "../../../database/prisma";
 import { injectable } from "tsyringe";
 import { CreateInscricoesDTO } from "../useCases/CreateInscricoes/CreateInscricoesDTO";
@@ -28,6 +27,15 @@ export default class InscricoesRepository implements InscricoesRepository {
           ParticipanteId: inscricao.ParticipanteId
         }
       });
+    }
+
+    public async getByEventoAndParticipanteId(eventoId: number, participanteId: number) {
+      return await prisma.inscricoes.findFirst({
+        where: {
+          EventoId: Number(eventoId),
+          ParticipanteId: Number(participanteId)
+        }
+      })
     }
     
 }

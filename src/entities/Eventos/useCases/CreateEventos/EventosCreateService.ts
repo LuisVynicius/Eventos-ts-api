@@ -1,5 +1,5 @@
 import { injectable, inject } from 'tsyringe';
-import EventosRepository from '../repositories/EventosRepository';
+import EventosRepository from '../../repositories/EventosRepository';
 
 @injectable()  
 export default class EventosCreateService {

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import EventosCreateController from "../entities/Eventos/useCases/EventosCreateController";
+import EventosCreateController from "../entities/Eventos/useCases/CreateEventos/EventosCreateController";
 import { container } from "tsyringe";
 
 const eventoRoute = Router( { mergeParams: true } );

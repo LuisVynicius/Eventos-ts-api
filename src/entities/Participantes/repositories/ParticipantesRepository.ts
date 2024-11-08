@@ -11,5 +11,15 @@ export default class ParticipantesRepository implements IParticipantesRepository
             data: participantes
         });
     }
+
+    public async findByEmail(email: string) {
+        const participante = await prisma.participantes.findFirst({
+            where: {
+                EmailParticipante: email
+            }
+        })
+
+        return participante;
+    }
     
 }

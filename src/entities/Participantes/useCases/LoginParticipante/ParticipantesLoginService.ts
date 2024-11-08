@@ -17,6 +17,7 @@ export default class ParticipanteLoginService {
         
         const participante = await this.participantesRepository.findByEmail(login.Email);
 
-        if (await argon2i.veri)
+        // To Do
+        //
     }
 }

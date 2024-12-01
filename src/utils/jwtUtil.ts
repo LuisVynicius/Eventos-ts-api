@@ -2,7 +2,7 @@ import { sign, verify } from "jsonwebtoken";
 
 const getToken = (Email: string) => {
     const secretKey = getSecretKey();
-
+    console.log("4")
     const token = sign({Email}, secretKey);
 
     return token;

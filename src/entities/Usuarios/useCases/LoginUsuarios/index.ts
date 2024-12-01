@@ -1,6 +1,6 @@
 import { container } from "tsyringe";
-import ParticipantesLoginController from "./ParticipantesLoginController";
-import ParticipanteLoginService from "./ParticipantesLoginService";
+import ParticipantesLoginController from "./UsuariosLoginController";
+import ParticipanteLoginService from "./UsuariosLoginService";
 
 export default async function CreateParticipantes() {
 

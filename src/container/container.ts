@@ -22,6 +22,12 @@ import { ICertificadosRepository } from "../entities/Certificados/repositories/i
 import CertificadosRepository from "../entities/Certificados/repositories/CertificadoRepository";
 import CertificadosGetService from "../entities/Certificados/useCases/GetCertificados/CertificadosGetService";
 import CertificadosGetController from "../entities/Certificados/useCases/GetCertificados/CertificadosGetController";
+import { IUsuariosRepository } from "../entities/Usuarios/repositories/interfaces/IUsuariosRepository";
+import UsuariosRepository from "../entities/Usuarios/repositories/UsuariosRepository";
+import UsuariosLoginService from "../entities/Usuarios/useCases/LoginUsuarios/UsuariosLoginService";
+import UsuariosLoginController from "../entities/Usuarios/useCases/LoginUsuarios/UsuariosLoginController";
+import UsuariosCreateController from "../entities/Usuarios/useCases/CreateUsuarios/UsuariosCreateController";
+import UsuariosCreateService from "../entities/Usuarios/useCases/CreateUsuarios/UsuariosCreateService";
 
 container.registerSingleton<IDepartamentoRepository>("DepartamentoRepository", DepartamentoRepository);
 container.registerSingleton(DepartamentoCreateService);
@@ -45,3 +51,10 @@ container.registerSingleton(InscricoesPresenceController);
 container.registerSingleton<ICertificadosRepository>("ICertificadosRepository", CertificadosRepository);
 container.registerSingleton(CertificadosGetService);
 container.registerSingleton(CertificadosGetController);
+
+container.registerSingleton<IUsuariosRepository>("IUsuariosRepository", UsuariosRepository);
+container.registerSingleton(UsuariosLoginService);
+container.registerSingleton(UsuariosLoginController)
+
+container.registerSingleton(UsuariosCreateController);
+container.registerSingleton(UsuariosCreateService)

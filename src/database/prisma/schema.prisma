@@ -4,49 +4,103 @@
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
-datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
-}
-
 generator client {
   provider = "prisma-client-js"
 }
 
+datasource db {
+  provider = "mysql" 
+  url      = env("DATABASE_URL")
+}
+
+model Usuarios {
+  UsuarioId    Int       @id @default(autoincrement())
+  Nome         String    @db.VarChar(100)
+  Email        String    @unique @db.VarChar(100)
+  Senha        String    @db.VarChar(255)
+  DataCadastro DateTime  @default(now())
+  Ativo        Boolean   @default(true)
+  TipoUsuario  String    @db.VarChar(20) // Admin, Comum
+  Eventos      Eventos[] @relation("ResponsavelEventos")
+  Participantes Participantes[]
+}
+
 model Departamentos {
-  DepartamentoId       Int           @id @default(autoincrement())
-  NomeDepartamento     String        @db.VarChar(50)
-  eventos              Eventos[]
-  participantes        Participantes[]
+  DepartamentoId     Int             @id @default(autoincrement())
+  NomeDepartamento   String          @db.VarChar(50)
+  Eventos            Eventos[]
+  Participantes      Participantes[]
+}
+
+model Participantes {
+  ParticipanteId   Int           @id @default(autoincrement())
+  UsuarioId        Int
+  Usuario          Usuarios      @relation(fields: [UsuarioId], references: [UsuarioId])
+  TipoParticipante String        @db.VarChar(20) // Interno ou Externo
+  DepartamentoId   Int
+  Departamento     Departamentos @relation(fields: [DepartamentoId], references: [DepartamentoId])
+  Matricula        String?       @db.VarChar(20) // Para participantes internos
+  CPF              String        @unique @db.VarChar(14)
+  DataAtualizacao  DateTime      @default(now())
+  Inscricoes       Inscricoes[]
 }
 
 model Eventos {
-  EventoId             Int           @id @default(autoincrement())
-  NomeEvento           String        @db.VarChar(100)
-  DataInicioEvento     DateTime
-  DataFimEvento        DateTime
-  DescricaoEvento      String?       @db.VarChar(500)
-  TipoEvento           String        @db.VarChar(50)
-  DepartamentoEventoId Int
-  departamento         Departamentos @relation(fields: [DepartamentoEventoId], references: [DepartamentoId])
-  inscricoes           Inscricoes[]
+  EventoId            Int               @id @default(autoincrement())
+  NomeEvento          String            @db.VarChar(100)
+  DataInicioEvento    DateTime
+  DataFimEvento       DateTime
+  PeriodoInscricaoInicio DateTime
+  PeriodoInscricaoFim DateTime
+  DescricaoEvento     String?           @db.VarChar(500)
+  TipoEvento          String            @db.VarChar(50) // Interno ou Externo
+  CargaHoraria        Int
+  ResponsavelId       Int
+  Responsavel         Usuarios          @relation("ResponsavelEventos", fields: [ResponsavelId], references: [UsuarioId])
+  DepartamentoId      Int
+  Departamento        Departamentos     @relation(fields: [DepartamentoId], references: [DepartamentoId])
+  Parceria           String?            @db.VarChar(100)
+  ComunidadeEnvolvida String?           @db.VarChar(50) // Externa ou Interna
+  Status             String             @default("Ativo") @db.VarChar(20) // Ativo, Cancelado, Concluído
+  EventosCursos      EventosCursos[]
+  Inscricoes         Inscricoes[]
+}
+
+model EventosCursos {
+  EventoCursoId Int     @id @default(autoincrement())
+  EventoId      Int
+  Evento        Eventos @relation(fields: [EventoId], references: [EventoId])
+  NomeCurso     String  @db.VarChar(100)
 }
 
 model Inscricoes {
-  InscricaoId     Int           @id @default(autoincrement())
-  EventoId        Int
-  evento          Eventos       @relation(fields: [EventoId], references: [EventoId])
-  ParticipanteId  Int
-  participante    Participantes @relation(fields: [ParticipanteId], references: [ParticipanteId])
-  DataInscricao   DateTime
-  Compareceu      Boolean       @default(false)
-  certificado     Certificados?
+  InscricaoId    Int           @id @default(autoincrement())
+  EventoId       Int
+  Evento         Eventos       @relation(fields: [EventoId], references: [EventoId], onDelete: NoAction, onUpdate: NoAction)
+  ParticipanteId Int
+  Participante   Participantes @relation(fields: [ParticipanteId], references: [ParticipanteId], onDelete: NoAction, onUpdate: NoAction)
+  DataInscricao  DateTime      @default(now())
+  StatusInscricao String       @default("Pendente") @db.VarChar(20) // Pendente, Confirmada, Cancelada
+  Compareceu      Boolean      @default(false)
+  Presencas       Presenca[]
+  Certificados    Certificados[]
+}
+
+
+model Presenca {
+  PresencaId   Int        @id @default(autoincrement())
+  InscricaoId  Int
+  Inscricao    Inscricoes @relation(fields: [InscricaoId], references: [InscricaoId])
+  DataPresenca DateTime
+  Presente     Boolean    @default(false)
 }
 
 model Certificados {
-  CertificadoId           Int         @id @default(autoincrement())
-  InscricaoId             Int         @unique
-  inscricao               Inscricoes  @relation(fields: [InscricaoId], references: [InscricaoId])
-  ArquivoCertificado      Bytes
-  DataEmissaoCertificado  DateTime
+  CertificadoId    Int        @id @default(autoincrement())
+  InscricaoId      Int
+  Inscricao        Inscricoes @relation(fields: [InscricaoId], references: [InscricaoId])
+  CodigoCertificado String    @unique @db.VarChar(50)
+  ArquivoCertificado Bytes?
+  DataEmissao      DateTime   @default(now())
+  Status           String     @default("Emitido") @db.VarChar(20) // Emitido, Revogado
 }

@@ -22,8 +22,8 @@ export default class CertificadosRepository implements ICertificadosRepository {
     return certificado;
   }
 
-  public async getByInscricaoId(id: number) {
-    return prisma.certificados.findUnique({
+  public async getByInscricaoId(id: number): Promise<Certificados | null> {
+    return prisma.certificados.findFirst({
       where: {
         InscricaoId: id
       }
